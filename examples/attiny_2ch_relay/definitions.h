@@ -12,7 +12,7 @@
 //--------------------------------------- METADATA
 #define META_COUNT 19
 const static char m1[] PROGMEM = "ASSIM_NAME"; 
-const static char m2[] PROGMEM = "KY-019"; 
+const static char m2[] PROGMEM = "2CH RELAY"; 
 const static char m3[] PROGMEM = "1"; 
 const static char m4[] PROGMEM = "ASSIM_VERSION"; 
 const static char m5[] PROGMEM = "2"; 
