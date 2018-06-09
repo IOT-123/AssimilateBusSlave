@@ -1,6 +1,6 @@
 /*
  * 
- * IOT123 ATTINY85 I2C SLAVE AUTO-JOIN LAYER FOR ACTOR: 2CH RELAY
+ * IOT123 ATTINY85 I2C SLAVE AUTO-JOIN LAYER FOR ACTOR: HEARTBEAT
  * 
  * Receive commands across wire on via I2C in 3 segment 16byte packets
  *  ID of PROPERTY (set in _properties)
@@ -10,8 +10,9 @@
  * Pins on ATTINY85
  * SDA PB0
  * SCL PB2
- * RELAY CH1 PB3
- * RELAY CH2 PB4
+ * LED I2C REQUEST PB3
+ * LED I2C RECEIVE PB4
+ * LED ATTINY RUNNING PB1
  * 
 <CH>:<CMD>
   - on 0 switches off relay
@@ -31,10 +32,12 @@ AssimilateBusSlave _assim_slave;
 void setup()
 {
 //--------------------------------------- INITIALIZE ACTOR FUNCTIONS
-  pinMode(PIN_CH1, OUTPUT);
-  pinMode(PIN_CH2, OUTPUT);
-  digitalWrite(PIN_CH1, LOW);
-  digitalWrite(PIN_CH2, LOW);
+  pinMode(PIN_REQ, OUTPUT);
+  pinMode(PIN_REC, OUTPUT);
+  pinMode(PIN_RUN, OUTPUT);
+  digitalWrite(PIN_REQ, LOW);
+  digitalWrite(PIN_REC, LOW);
+  digitalWrite(PIN_RUN, HIGH);
 //--------------------------------------- END INITIALIZE ACTOR FUNCTIONS
   _assim_slave.begin(ADDRESS_SLAVE, set_properties, receive_command);
 }
@@ -44,32 +47,16 @@ void loop(){}
 // return status of the functions via the nvc array (props)
 void set_properties(Definitions::nvc *props){
 //--------------------------------------- RETURN STATUS OF ACTOR FUNCTIONS
-  byte value1 = digitalRead(PIN_CH1);
-  itoa(value1, props[0].Value, 10);
-  byte value2 = digitalRead(PIN_CH2);
-  itoa(value2, props[1].Value, 10);
+// if we are alive we are willing to broadcast it
+  strcpy(props[0].Value, "ALIVE");
+  digitalWrite(PIN_REQ, !digitalRead(PIN_REQ));
 //--------------------------------------- END RETURN STATUS OF ACTOR FUNCTIONS
 }
 
 void receive_command(String command){
 //--------------------------------------- ACTIONS OF ACTOR BASED ON COMMANDS PASSED VIA I2C
 // 0:1
-  byte idx = atoi(strtok(command.c_str(), ":"));
-  byte value = atoi(strtok(NULL, ":"));
-  byte pin = idx == 0 ? PIN_CH1 : PIN_CH2;
-  switch (value){
-    case 0:
-      digitalWrite(pin, LOW);
-      break;
-    case 1:
-      digitalWrite(pin, HIGH);
-      break;
-    case 2:
-      digitalWrite(pin, !digitalRead(pin));
-      break;
-      default: ;
-      //pass through
-  };
+  digitalWrite(PIN_REC, !digitalRead(PIN_REC));
 //--------------------------------------- END ACTIONS OF ACTOR BASED ON COMMANDS PASSED VIA I2C
 }
 
