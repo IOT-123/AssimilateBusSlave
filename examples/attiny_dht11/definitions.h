@@ -57,7 +57,7 @@ public:
       bool Continue;
   };
 //--------------------------------------- PUBLISHED PROPERTIES
-nvc props[3] ={
+nvc props[2] ={
     {"Humidity", "", true},
     {"Temperature", "", false}
 };
